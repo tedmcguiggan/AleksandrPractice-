@@ -16,20 +16,6 @@ protocol ItemCellDelegate: AnyObject {
 
 class ItemCell: UITableViewCell {
     
-    var isChecked = false
-    weak var delegate: ItemCellDelegate?
-        
-    
-    
-    public var checkboxImage: UIButton = {
-        let button = UIButton()
-        let image = UIImage(systemName: "square")
-        button.setImage(image, for: .normal)
-        button.addTarget(self, action: #selector(toggleCheckMark), for: .touchUpInside)
-        button.isEnabled = true
-        return button
-    }()
-    
     public var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
@@ -43,11 +29,21 @@ class ItemCell: UITableViewCell {
         return label
     }()
     
-    @objc func toggleCheckMark() {
-        delegate?.toggleCheckMark()
-    }
+    public var statusLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = .green
+        return label
+    }()
     
+    public var dateLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = .black
+        return label
+    }()
     
+  
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -57,11 +53,16 @@ class ItemCell: UITableViewCell {
         stack.distribution = .fillEqually
         stack.spacing = 4
 
-//        addSubview(checkboxImage)
-//        checkboxImage.centerY(inView: self, leftAnchor: leftAnchor, paddingLeft: 12)
         
         addSubview(stack)
         stack.centerY(inView: self, leftAnchor: leftAnchor, paddingLeft: 12)
+        
+        addSubview(statusLabel)
+        statusLabel.centerY(inView: self)
+        statusLabel.anchor(right: safeAreaLayoutGuide.rightAnchor, paddingRight: 50)
+        
+//        addSubview(dateLabel)
+//        dateLabel.centerY(inView: self, leftAnchor: statusLabel.rightAnchor, paddingLeft: 20)
     }
     
     required init?(coder: NSCoder) {

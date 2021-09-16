@@ -8,52 +8,27 @@
 import UIKit
 import CoreData
 
-class CheckListViewController: UITableViewController, ItemCellDelegate, UISearchBarDelegate {
-   
-    
-    func toggleCheckMark() {
-        print("made it here")
-    }
-    
-    private let searchController = UISearchController(searchResultsController: nil)
+class CheckListViewController: UITableViewController, UISearchBarDelegate {
 
+    private let searchController = UISearchController(searchResultsController: nil)
+    lazy var presenter = Presenter(with: self)
     var itemArray = [Item]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        loadItems()
+        presenter.loadItems()
         configureSearchController()
         configureTableView()
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
     }
     
+    
     @objc func addButtonPressed() {
-      
-        let newItem = Item(context: context)
-        var title = UITextField()
-        var body = UITextField()
-        let alert = UIAlertController(title: "Add New Item", message: "", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Add Item", style: .default) { action in
-            newItem.title = title.text
-            newItem.body = body.text
-            newItem.isDone = false
-            self.itemArray.append(newItem)
-            self.saveItems()
-        }
-        alert.addTextField { alertTextField in
-            alertTextField.placeholder = "Item Name"
-            title = alertTextField
-        }
-        alert.addTextField { alertTextField in
-            alertTextField.placeholder = "Item Description"
-            body = alertTextField
-        }
-        
-        alert.addAction(action)
-        
-        present(alert, animated: true, completion: nil)
+        presenter.addButtonPressed()
     }
     
     func configureTableView() {
@@ -72,55 +47,33 @@ class CheckListViewController: UITableViewController, ItemCellDelegate, UISearch
     }
     
     
-    func saveItems() {
-        do {
-            try context.save()
-        } catch  {
-            print("Error saving context")
-        }
-        self.tableView.reloadData()
-    }
-    
-    func loadItems(request: NSFetchRequest<Item> = Item.fetchRequest()) {
-        do {
-            itemArray = try context.fetch(request)
-        } catch  {
-            print("Error fetching data")
-        }
-        
-        tableView.reloadData()
-        
-    }
-    
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
     }
-    
-    
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CheckList Cell", for: indexPath) as! ItemCell
         cell.titleLabel.text = itemArray[indexPath.row].title
         cell.bodyLabel.text = itemArray[indexPath.row].body
-        cell.delegate = self
+        cell.statusLabel.text = itemArray[indexPath.row].status
+        cell.dateLabel.text = itemArray[indexPath.row].date
         return cell
     }
-    
-    
-    
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let controller = DetailViewController()
-        controller.itemTitle = itemArray[indexPath.row].title
-        controller.itemBody = itemArray[indexPath.row].body
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let controller = storyboard.instantiateViewController(identifier: "DetailView") as DetailViewController
+        controller.itemArray = itemArray
+        controller.indexPath = indexPath
+        controller.delegate = self
         navigationController?.pushViewController(controller, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
       if editingStyle == .delete {
-        print("Deleted")
 
+//        presenter.deleteItems(indexPath: indexPath)
         context.delete(itemArray[indexPath.row])
         self.itemArray.remove(at: indexPath.row)
         
@@ -132,26 +85,34 @@ class CheckListViewController: UITableViewController, ItemCellDelegate, UISearch
 
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
-        
-        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-        
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        
-        loadItems(request: request)
-                
+        presenter.searchBarButtonClicked(searchBar)
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchBar.text?.count == 0 {
-            loadItems()
-            
-            DispatchQueue.main.async {
-                searchBar.resignFirstResponder()
-            }
-            
-        }
+        presenter.searchBar(searchBar, textDidChange: searchText)
     }
+}
 
+extension CheckListViewController: PresenterView {
+  
+    func saveItems() {
+        presenter.saveItems(items: itemArray)
+        tableView.reloadData()
+    }
+    
+    func presentItems(items: [Item]) {
+        self.itemArray = items
+        tableView.reloadData()
+    }
+}
+
+extension CheckListViewController: DetailViewControllerDelegate {
+    func updateTableView(items: [Item]) {
+        itemArray = items
+        navigationController?.popViewController(animated: true)
+        presenter.saveItems(items: itemArray)
+    }
+    
+    
 }
 
