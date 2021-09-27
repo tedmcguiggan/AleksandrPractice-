@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Xqb-ab-6TE">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
@@ -8,6 +8,53 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Check List View Controller-->
+        <scene sceneID="kmQ-Cs-QU6">
+            <objects>
+                <tableViewController id="Fee-Gy-zhq" customClass="CheckListViewController" customModule="TedsCheckListApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="SyT-eW-GYu">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <searchBar key="tableHeaderView" contentMode="redraw" id="CKR-Yk-4z6">
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            <textInputTraits key="textInputTraits"/>
+                            <connections>
+                                <outlet property="delegate" destination="Fee-Gy-zhq" id="5Og-d0-S0h"/>
+                            </connections>
+                        </searchBar>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="YmM-fy-oYy">
+                                <rect key="frame" x="0.0" y="68.5" width="414" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="YmM-fy-oYy" id="ySM-u4-bPC">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="Fee-Gy-zhq" id="7kL-QG-pDB"/>
+                            <outlet property="delegate" destination="Fee-Gy-zhq" id="Qgu-d6-1KT"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="NSW-aJ-NKQ">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="SUb-QN-JgY">
+                            <connections>
+                                <action selector="addButtonPressed:" destination="Fee-Gy-zhq" id="9Jx-7t-UuC"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="searchBar" destination="CKR-Yk-4z6" id="Lgd-Uv-Kex"/>
+                        <segue destination="CNA-hO-q0A" kind="show" identifier="showDetail" id="gsk-X1-2Kb"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Rt2-cf-B6h" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-3997.1014492753625" y="-755.35714285714278"/>
+        </scene>
         <!--Detail View Controller-->
         <scene sceneID="6eq-p2-Xlc">
             <objects>
@@ -17,7 +64,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="helloooo" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wjC-Yk-564">
-                                <rect key="frame" x="75" y="94" width="264" height="34"/>
+                                <rect key="frame" x="75" y="138" width="264" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="34" id="Nk5-WG-eP8"/>
                                 </constraints>
@@ -25,7 +72,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" borderStyle="roundedRect" placeholder="hello" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hEI-iW-LUO">
-                                <rect key="frame" x="75" y="158" width="264" height="400"/>
+                                <rect key="frame" x="75" y="202" width="264" height="400"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="400" id="GsV-Pt-wQ2"/>
                                 </constraints>
@@ -33,19 +80,19 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" datePickerMode="date" translatesAutoresizingMaskIntoConstraints="NO" id="wBi-Az-7e4">
-                                <rect key="frame" x="47" y="578" width="320" height="40"/>
+                                <rect key="frame" x="47" y="622" width="320" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="3za-xi-HlW"/>
                                 </constraints>
                             </datePicker>
                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wnI-ra-sKM">
-                                <rect key="frame" x="47" y="628" width="320" height="50"/>
+                                <rect key="frame" x="47" y="672" width="320" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="4Lu-92-3b5"/>
                                 </constraints>
                             </pickerView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="afb-rb-9o7">
-                                <rect key="frame" x="158" y="698" width="98" height="30"/>
+                                <rect key="frame" x="158" y="742" width="98" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="Xbs-So-c1C"/>
                                 </constraints>
@@ -72,6 +119,7 @@
                             <constraint firstItem="hEI-iW-LUO" firstAttribute="leading" secondItem="Xa6-q3-JOb" secondAttribute="leading" constant="75" id="zCO-jv-lU3"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="PvQ-Qq-zOr"/>
                     <connections>
                         <outlet property="datePicker" destination="wBi-Az-7e4" id="5o6-RW-Ssx"/>
                         <outlet property="itemBody" destination="hEI-iW-LUO" id="0g6-Rp-kD6"/>
@@ -81,7 +129,25 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KZU-Lc-Dsw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3986.9565217391309" y="-762.05357142857144"/>
+            <point key="canvasLocation" x="-3076.811594202899" y="-762.05357142857144"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="80b-Ax-IHM">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Xqb-ab-6TE" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="au6-0w-zpu">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Fee-Gy-zhq" kind="relationship" relationship="rootViewController" id="FTP-Nx-a8T"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yL4-JZ-ttf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-4907.2463768115949" y="-755.35714285714278"/>
         </scene>
     </scenes>
     <resources>

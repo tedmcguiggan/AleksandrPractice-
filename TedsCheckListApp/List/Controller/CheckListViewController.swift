@@ -10,80 +10,85 @@ import CoreData
 
 class CheckListViewController: UITableViewController, UISearchBarDelegate {
 
-    private let searchController = UISearchController(searchResultsController: nil)
+    @IBOutlet weak var searchBar: UISearchBar!
     lazy var presenter = Presenter(with: self)
-    var itemArray = [Item]()
+    var items = [Item]()
+    var indexPath = IndexPath()
+    let dateFormatter = DateFormatter()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
+        searchBar.delegate = self
         presenter.loadItems()
-        configureSearchController()
-        configureTableView()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-    }
-    
-    
-    @objc func addButtonPressed() {
-        presenter.addButtonPressed()
-    }
-    
-    func configureTableView() {
         tableView.register(ItemCell.self, forCellReuseIdentifier: "CheckList Cell")
         tableView.rowHeight = 60
     }
     
-    func configureSearchController() {
-        searchController.searchBar.delegate = self
-        searchController.searchBar.showsCancelButton = false
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.hidesNavigationBarDuringPresentation = false
-        navigationItem.hidesSearchBarWhenScrolling = false
-        searchController.searchBar.placeholder = "Search for an item"
-        navigationItem.searchController = searchController
+    
+    @IBAction func addButtonPressed(_ sender: Any) {
+        let date = Date()
+        
+        dateFormatter.dateFormat = "dd/MM/yyyy"
+        let newItem = Item(context: context)
+        var title = UITextField()
+        var body = UITextField()
+        let alert = UIAlertController(title: "Add New Item", message: "", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Add Item", style: .default) { action in
+            newItem.title = title.text
+            newItem.body = body.text
+            newItem.status = "To-Do"
+     //       newItem.date = date
+            self.items.append(newItem)
+            self.saveItems()
+        }
+        alert.addTextField { alertTextField in
+            alertTextField.placeholder = "Item Name"
+            title = alertTextField
+        }
+        alert.addTextField { alertTextField in
+            alertTextField.placeholder = "Item Description"
+            body = alertTextField
+        }
+        
+        alert.addAction(action)
+        
+        self.present(alert, animated: true, completion: nil)
     }
     
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemArray.count
+        return items.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CheckList Cell", for: indexPath) as! ItemCell
-        cell.titleLabel.text = itemArray[indexPath.row].title
-        cell.bodyLabel.text = itemArray[indexPath.row].body
-        cell.statusLabel.text = itemArray[indexPath.row].status
-        cell.dateLabel.text = itemArray[indexPath.row].date
+        cell.titleLabel.text = items[indexPath.row].title
+        cell.bodyLabel.text = items[indexPath.row].body
+        cell.statusLabel.text = items[indexPath.row].status
+  //      cell.dateLabel.text = dateFormatter.string(from: items[indexPath.row].date!)
         return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyboard.instantiateViewController(identifier: "DetailView") as DetailViewController
-        controller.itemArray = itemArray
-        controller.indexPath = indexPath
-        controller.delegate = self
-        navigationController?.pushViewController(controller, animated: true)
-        tableView.deselectRow(at: indexPath, animated: true)
+        self.indexPath = indexPath
+        performSegue(withIdentifier: "showDetail", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destination = segue.destination as? DetailViewController {
+            destination.items = items
+            destination.indexPath = indexPath
+            destination.delegate = self
+        }
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
       if editingStyle == .delete {
-
-//        presenter.deleteItems(indexPath: indexPath)
-        context.delete(itemArray[indexPath.row])
-        self.itemArray.remove(at: indexPath.row)
-        
-        self.tableView.deleteRows(at: [indexPath], with: .automatic)
-        
-        saveItems()
+        presenter.deleteItems(item: items[indexPath.row])
       }
     }
 
-    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         presenter.searchBarButtonClicked(searchBar)
     }
@@ -94,25 +99,23 @@ class CheckListViewController: UITableViewController, UISearchBarDelegate {
 }
 
 extension CheckListViewController: PresenterView {
-  
+    
     func saveItems() {
-        presenter.saveItems(items: itemArray)
+        presenter.saveItems(items: items)
         tableView.reloadData()
     }
     
     func presentItems(items: [Item]) {
-        self.itemArray = items
+        self.items = items
         tableView.reloadData()
     }
 }
 
 extension CheckListViewController: DetailViewControllerDelegate {
     func updateTableView(items: [Item]) {
-        itemArray = items
+        self.items = items
         navigationController?.popViewController(animated: true)
-        presenter.saveItems(items: itemArray)
+        presenter.saveItems(items: items)
     }
-    
-    
 }
 

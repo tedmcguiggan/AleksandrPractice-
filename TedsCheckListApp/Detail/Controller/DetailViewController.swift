@@ -14,10 +14,14 @@ protocol DetailViewControllerDelegate: AnyObject {
 
 class DetailViewController: UIViewController, PresenterView {
     func saveItems() {
-        presenter.saveItems(items: itemArray)
+        presenter.saveItems(items: items)
     }
     
     func presentItems(items: [Item]) {
+        print("123")
+    }
+    
+    func deleteItems(item: Item) {
         print("123")
     }
     
@@ -25,7 +29,7 @@ class DetailViewController: UIViewController, PresenterView {
     let status = ["To-Do","In Progress","Done"]
     weak var delegate: DetailViewControllerDelegate?
     
-    public var itemArray = [Item]()
+    public var items = [Item]()
     var indexPath = IndexPath()
     lazy var presenter = Presenter(with: self)
     var statusSelected = "To-Do"
@@ -35,13 +39,9 @@ class DetailViewController: UIViewController, PresenterView {
     
     @IBOutlet weak var itemBody: UITextField!
     
-    
     @IBOutlet weak var datePicker: UIDatePicker!
-    
-    
+        
     @IBOutlet weak var statusPicker: UIPickerView!
-    
-    
     
     override func viewDidLoad() {
         view.backgroundColor = .white
@@ -50,22 +50,20 @@ class DetailViewController: UIViewController, PresenterView {
         statusPicker.delegate = self
         
         
-        itemTitle.text = itemArray[indexPath.row].title
-        itemBody.text = itemArray[indexPath.row].body
+        itemTitle.text = items[indexPath.row].title
+        itemBody.text = items[indexPath.row].body
 
     
     }
     
-
-    
     @IBAction func saveChanges(_ sender: Any) {
         let dateFormatter = DateFormatter()
-        itemArray[indexPath.row].title = itemTitle.text
-        itemArray[indexPath.row].body = itemBody.text
-        itemArray[indexPath.row].status = statusSelected
-        itemArray[indexPath.row].date = dateFormatter.string(from: datePicker.date)
+        items[indexPath.row].title = itemTitle.text
+        items[indexPath.row].body = itemBody.text
+        items[indexPath.row].status = statusSelected
+ //       items[indexPath.row].date = datePicker.date
         
-        self.delegate?.updateTableView(items: self.itemArray)
+        self.delegate?.updateTableView(items: self.items)
     }
     
 }

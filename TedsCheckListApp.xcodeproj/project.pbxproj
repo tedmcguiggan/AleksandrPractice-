@@ -20,6 +20,7 @@
 		B03DB7B826DD020400FF6D23 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B03DB7B626DD020400FF6D23 /* DataModel.xcdatamodeld */; };
 		B05F0EB226DD68D9008CE3FF /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05F0EB126DD68D9008CE3FF /* DetailViewController.swift */; };
 		B0845DCF26F2AEB100987EA2 /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0845DCE26F2AEB100987EA2 /* Status.swift */; };
+		B0ECBD5327018E18002FCE95 /* ItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0ECBD5227018E18002FCE95 /* ItemViewModel.swift */; };
 		B0FB1AD226F0552800C2EABC /* Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0FB1AD126F0552800C2EABC /* Presenter.swift */; };
 /* End PBXBuildFile section */
 
@@ -60,6 +61,7 @@
 		B03DB7B726DD020400FF6D23 /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		B05F0EB126DD68D9008CE3FF /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		B0845DCE26F2AEB100987EA2 /* Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
+		B0ECBD5227018E18002FCE95 /* ItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViewModel.swift; sourceTree = "<group>"; };
 		B0FB1AD126F0552800C2EABC /* Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -222,6 +224,7 @@
 			isa = PBXGroup;
 			children = (
 				B0FB1AD126F0552800C2EABC /* Presenter.swift */,
+				B0ECBD5227018E18002FCE95 /* ItemViewModel.swift */,
 			);
 			path = Presenter;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				B02F61CC26D67DF900AF8534 /* CheckListViewController.swift in Sources */,
 				B03DB7B526DC8C1500FF6D23 /* ItemCell.swift in Sources */,
 				B0FB1AD226F0552800C2EABC /* Presenter.swift in Sources */,
+				B0ECBD5327018E18002FCE95 /* ItemViewModel.swift in Sources */,
 				B03DB7B826DD020400FF6D23 /* DataModel.xcdatamodeld in Sources */,
 				B02F61C826D67DF900AF8534 /* AppDelegate.swift in Sources */,
 				B0845DCF26F2AEB100987EA2 /* Status.swift in Sources */,
