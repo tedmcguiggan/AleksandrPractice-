@@ -8,12 +8,12 @@
 import Foundation
 
 
-enum Status: Int, RawRepresentable{
+enum Status: String, CaseIterable {
     case toDO
     case inProgress
     case done
     
-    var currentStatus: String {
+    var description: String {
         switch self {
         case .toDO:
             return "To-Do"

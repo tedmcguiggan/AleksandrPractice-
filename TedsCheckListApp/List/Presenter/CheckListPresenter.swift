@@ -10,13 +10,13 @@ import CoreData
 
 protocol PresenterView: AnyObject {
     func presentItems(items: [ItemViewModel])
-    func presentDetailView()
+    func presentDetailView(for item: ItemViewModel?)
 }
 
 class CheckListPresenter {
     
     weak var view: PresenterView?
-    private var itemArray = [Item]()
+    private var items = [ItemViewModel]()
     var context: NSManagedObjectContext!
 
     init(with view: PresenterView) {
@@ -27,41 +27,36 @@ class CheckListPresenter {
         loadItems()
     }
     
-    func showDetail() {
-        view?.presentDetailView()
+    func showDetail(index: Int?) {
+        var item: ItemViewModel?
+        if let index = index {
+            item = items[index]
+        }
+        
+        view?.presentDetailView(for: item)
     }
     
     func addNewItem(item: ItemViewModel) {
-        let convertedItem = convertToItem(item: item)
-        itemArray.append(convertedItem)
+        let _ = item.getItem(context: context)
         saveItems()
-    }
-    
-    func convertToItem(item: ItemViewModel) -> Item {
-        let convertedItem = Item(context: context)
-        convertedItem.title = item.title
-        convertedItem.body = item.body
-        convertedItem.status = item.status
-        convertedItem.date = item.date
-        convertedItem.id = item.id
-        return convertedItem
     }
     
     func updateItem(item: ItemViewModel) {
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
-        var foundItem = [Item]()
-        request.predicate = NSPredicate(format: "id CONTAINS[cd] %@", item.id!)
+        let request = Item.fetchRequest()
+        request.predicate = NSPredicate(format: "id CONTAINS[cd] %@", item.id)
+        
         do {
-            foundItem = try context.fetch(request)
+            guard let item = try context.fetch(request).first else { return }
+            
+            item.title = item.title
+            item.setValue(item.title, forKey: "title")
+            item.setValue(item.body, forKey: "body")
+            item.setValue(item.status, forKey: "status")
+            item.setValue(item.date, forKey: "date")
+            saveItems()
         } catch  {
             print("Error fetching data")
         }
-        let uneditedItem = foundItem[0]
-        uneditedItem.setValue(item.title, forKey: "title")
-        uneditedItem.setValue(item.body, forKey: "body")
-        uneditedItem.setValue(item.status, forKey: "status")
-        uneditedItem.setValue(item.date, forKey: "date")
-        saveItems()
     }
     
     private func saveItems() {
@@ -76,18 +71,17 @@ class CheckListPresenter {
     private func loadItems(request: NSFetchRequest<Item> = Item.fetchRequest()) {
         do {
             print("MADE IT TO LOAD ITEMS")
-            itemArray = try context.fetch(request)
+            let itemArray = try context.fetch(request)
+            
+            let convertedArray = itemArray.map { ItemViewModel(id: $0.id!, title: $0.title!, body: $0.body!, status: $0.status!, date: $0.date!) }
+            self.items = convertedArray
+            print("MADE IT TO PRESENT ITEMS")
+            view?.presentItems(items: convertedArray)
         } catch  {
             print("Error fetching data")
         }
         
-        var convertedArray = [ItemViewModel]()
-        for x in itemArray {
-            let item = ItemViewModel(title: x.title, body: x.body, status: x.status, date: x.date, id: x.id)
-            convertedArray.append(item)
-        }
-        print("MADE IT TO PRESENT ITEMS")
-        view?.presentItems(items: convertedArray)
+        
     }
     
     func searchItems(text: String) {
@@ -98,9 +92,29 @@ class CheckListPresenter {
     }
 
     func deleteItems(item: ItemViewModel) {
-        var convertedItem = Item(context: context)
-        convertedItem = convertToItem(item: item)
-        context.delete(convertedItem)
-        saveItems()
+        do {
+        
+            let request = Item.fetchRequest()
+            request.predicate = NSPredicate(format: "id == %@", item.id)
+            if let item = try context.fetch(request).first {
+                context.delete(item)
+                saveItems()
+            }
+            
+        } catch {
+            print("Error fetching data: \(error)")
+        }
+    }
+}
+
+private extension ItemViewModel {
+    func getItem(context: NSManagedObjectContext) -> Item {
+        let convertedItem = Item(context: context)
+        convertedItem.title = title
+        convertedItem.body = body
+        convertedItem.status = status
+        convertedItem.date = date
+        convertedItem.id = id
+        return convertedItem
     }
 }

@@ -7,11 +7,10 @@
 
 import Foundation
 
-
 struct ItemViewModel {
-    let title: String?
-    let body: String?
-    let status: String?
-    let date: Date?
-    let id: String?
+    let id: String
+    var title: String
+    var body: String
+    var status: String
+    var date: Date
 }

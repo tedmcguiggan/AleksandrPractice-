@@ -16,20 +16,14 @@ protocol DetailViewControllerDelegate: AnyObject {
 
 class DetailViewController: UIViewController {
 
-    let status = ["To-Do","In Progress","Done"]
     weak var delegate: DetailViewControllerDelegate?
     var item: ItemViewModel? = nil
     var statusSelected: Status = .toDO
     
-    
     @IBOutlet weak var itemTitle: UITextField!
-    
     @IBOutlet weak var itemBody: UITextField!
-    
     @IBOutlet weak var datePicker: UIDatePicker!
-    
     @IBOutlet weak var statusPicker: UIPickerView!
-    
     @IBOutlet weak var deleteBtn: UIButton!
     
     override func viewDidLoad() {
@@ -48,13 +42,14 @@ class DetailViewController: UIViewController {
     }
     
     @IBAction func saveChanges(_ sender: Any) {
-        if let item = item {
-            let updatedItem = ItemViewModel(title: itemTitle.text, body: itemBody.text, status: statusSelected.currentStatus, date: datePicker.date, id: item.id)
-            self.item = nil
-            delegate?.updateItem(item: updatedItem)
+        if var item = item {
+            item.title = itemTitle.text!
+            item.body = itemBody.text!
+            item.status = statusSelected.rawValue
+            item.date = datePicker.date
+            delegate?.updateItem(item: item)
         } else {
-            let uuid = UUID().uuidString
-            let newItem = ItemViewModel(title: itemTitle.text, body: itemBody.text, status: statusSelected.currentStatus, date: datePicker.date, id: uuid)
+            let newItem = ItemViewModel(id: UUID().uuidString, title: itemTitle.text ?? "", body: itemBody.text ?? "", status: statusSelected.rawValue, date: datePicker.date)
             self.delegate?.addNewItem(item: newItem)
         }
         
@@ -76,32 +71,24 @@ extension DetailViewController: UIPickerViewDataSource, UIPickerViewDelegate {
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return status.count
+        return Status.allCases.count
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return status[row]
+        return Status.allCases[row].description
     }
     
-    func setDefaultValue(){
-        if let item = item {
-            if let indexPosition = status.firstIndex(of: (item.status)!){
-                statusPicker.selectRow(indexPosition, inComponent: 0, animated: false)
-            }
-            datePicker.date = item.date!
+    func setDefaultValue() {
+        guard let item = item else { return }
+        
+        if let status = Status(rawValue: item.status), let index = Status.allCases.firstIndex(of: status) {
+            statusPicker.selectRow(index, inComponent: 0, animated: false)
         }
+        
+        datePicker.date = item.date
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        switch status[row] {
-        case "To-Do":
-            statusSelected = .toDO
-        case "In Progress":
-            statusSelected = .inProgress
-        case "Done":
-            statusSelected = .done
-        default:
-            break
-        }
+        statusSelected = Status.allCases[row]
     }
 }

@@ -29,7 +29,7 @@ class CheckListViewController: UITableViewController, UISearchBarDelegate {
     }
     
     @IBAction func addButtonPressed(_ sender: Any) {
-        presenter.showDetail()
+        presenter.showDetail(index: nil)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -39,7 +39,7 @@ class CheckListViewController: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CheckList Cell", for: indexPath) as! EventCell
         dateFormatter.dateFormat = "MM/dd/YY"
-        let date = dateFormatter.string(from: items[indexPath.row].date!)
+        let date = dateFormatter.string(from: items[indexPath.row].date)
         cell.titleLabel.text = items[indexPath.row].title
         cell.bodyLabel.text = items[indexPath.row].body
         cell.statusLabel.text = items[indexPath.row].status
@@ -48,8 +48,7 @@ class CheckListViewController: UITableViewController, UISearchBarDelegate {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedItem = items[indexPath.row]
-        presenter.showDetail()
+        presenter.showDetail(index: indexPath.row)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -84,10 +83,10 @@ extension CheckListViewController: PresenterView {
         tableView.reloadData()
     }
     
-    func presentDetailView() {
+    func presentDetailView(for item: ItemViewModel?) {
+        selectedItem = item
         performSegue(withIdentifier: "showDetail", sender: self)
     }
-
 }
 
 
