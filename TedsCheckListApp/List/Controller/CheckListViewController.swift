@@ -9,52 +9,27 @@ import UIKit
 import CoreData
 
 class CheckListViewController: UITableViewController, UISearchBarDelegate {
-
+    
     @IBOutlet weak var searchBar: UISearchBar!
-    lazy var presenter = Presenter(with: self)
-    var items = [Item]()
-    var indexPath = IndexPath()
+    
+    lazy var presenter = CheckListPresenter(with: self)
+    var items = [ItemViewModel]()
+    var selectedItem: ItemViewModel?
     let dateFormatter = DateFormatter()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        presenter.context = context
         searchBar.delegate = self
-        presenter.loadItems()
-        tableView.register(ItemCell.self, forCellReuseIdentifier: "CheckList Cell")
+        tableView.register(UINib(nibName: "EventCell", bundle: nil), forCellReuseIdentifier: "CheckList Cell")
         tableView.rowHeight = 60
+        presenter.viewDidLoad()
     }
     
-    
     @IBAction func addButtonPressed(_ sender: Any) {
-        let date = Date()
-        
-        dateFormatter.dateFormat = "dd/MM/yyyy"
-        let newItem = Item(context: context)
-        var title = UITextField()
-        var body = UITextField()
-        let alert = UIAlertController(title: "Add New Item", message: "", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Add Item", style: .default) { action in
-            newItem.title = title.text
-            newItem.body = body.text
-            newItem.status = "To-Do"
-     //       newItem.date = date
-            self.items.append(newItem)
-            self.saveItems()
-        }
-        alert.addTextField { alertTextField in
-            alertTextField.placeholder = "Item Name"
-            title = alertTextField
-        }
-        alert.addTextField { alertTextField in
-            alertTextField.placeholder = "Item Description"
-            body = alertTextField
-        }
-        
-        alert.addAction(action)
-        
-        self.present(alert, animated: true, completion: nil)
+        presenter.showDetail()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -62,60 +37,75 @@ class CheckListViewController: UITableViewController, UISearchBarDelegate {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CheckList Cell", for: indexPath) as! ItemCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CheckList Cell", for: indexPath) as! EventCell
+        dateFormatter.dateFormat = "MM/dd/YY"
+        let date = dateFormatter.string(from: items[indexPath.row].date!)
         cell.titleLabel.text = items[indexPath.row].title
         cell.bodyLabel.text = items[indexPath.row].body
         cell.statusLabel.text = items[indexPath.row].status
-  //      cell.dateLabel.text = dateFormatter.string(from: items[indexPath.row].date!)
+        cell.dateLabel.text = date
         return cell
     }
-
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.indexPath = indexPath
-        performSegue(withIdentifier: "showDetail", sender: self)
+        selectedItem = items[indexPath.row]
+        presenter.showDetail()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? DetailViewController {
-            destination.items = items
-            destination.indexPath = indexPath
+            if let selectedItem = selectedItem {
+                destination.item = selectedItem
+            }
             destination.delegate = self
         }
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-      if editingStyle == .delete {
-        presenter.deleteItems(item: items[indexPath.row])
-      }
-    }
-
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        presenter.searchBarButtonClicked(searchBar)
+        presenter.searchItems(text: searchBar.text!)
     }
     
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        presenter.searchBar(searchBar, textDidChange: searchText)
+        if searchBar.text?.count == 0 {
+            presenter.viewDidLoad()
+            
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
     }
 }
 
 extension CheckListViewController: PresenterView {
     
-    func saveItems() {
-        presenter.saveItems(items: items)
+    func presentItems(items: [ItemViewModel]) {
+        self.items = items
         tableView.reloadData()
     }
     
-    func presentItems(items: [Item]) {
-        self.items = items
-        tableView.reloadData()
+    func presentDetailView() {
+        performSegue(withIdentifier: "showDetail", sender: self)
     }
+
 }
 
+
 extension CheckListViewController: DetailViewControllerDelegate {
-    func updateTableView(items: [Item]) {
-        self.items = items
-        navigationController?.popViewController(animated: true)
-        presenter.saveItems(items: items)
+    
+    func addNewItem(item: ItemViewModel) {
+        presenter.addNewItem(item: item)
+        selectedItem = nil
+    }
+    
+    func updateItem(item: ItemViewModel) {
+        presenter.updateItem(item: item)
+        selectedItem = nil
+    }
+    
+    func deleteItem(item: ItemViewModel) {
+        presenter.deleteItems(item: item)
+        selectedItem = nil
     }
 }
 

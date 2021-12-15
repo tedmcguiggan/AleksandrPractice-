@@ -63,7 +63,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="helloooo" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wjC-Yk-564">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter title here..." textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wjC-Yk-564">
                                 <rect key="frame" x="75" y="138" width="264" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="34" id="Nk5-WG-eP8"/>
@@ -71,7 +71,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" borderStyle="roundedRect" placeholder="hello" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hEI-iW-LUO">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" borderStyle="roundedRect" placeholder="Enter body here..." textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hEI-iW-LUO">
                                 <rect key="frame" x="75" y="202" width="264" height="400"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="400" id="GsV-Pt-wQ2"/>
@@ -86,25 +86,35 @@
                                 </constraints>
                             </datePicker>
                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wnI-ra-sKM">
-                                <rect key="frame" x="47" y="672" width="320" height="50"/>
+                                <rect key="frame" x="47" y="672" width="320" height="70"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="4Lu-92-3b5"/>
+                                    <constraint firstAttribute="height" constant="70" id="4Lu-92-3b5"/>
                                 </constraints>
                             </pickerView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="afb-rb-9o7">
-                                <rect key="frame" x="158" y="742" width="98" height="30"/>
+                                <rect key="frame" x="190" y="762" width="34" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="Xbs-So-c1C"/>
                                 </constraints>
-                                <state key="normal" title="Save Changes"/>
+                                <state key="normal" title="Save"/>
                                 <connections>
                                     <action selector="saveChanges:" destination="CNA-hO-q0A" eventType="touchUpInside" id="XHn-y4-Tdz"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ha6-J4-nkD">
+                                <rect key="frame" x="184.5" y="807" width="45" height="30"/>
+                                <state key="normal" title="Delete">
+                                    <color key="titleColor" systemColor="systemRedColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="deleteItem:" destination="CNA-hO-q0A" eventType="touchUpInside" id="7cU-4r-ft3"/>
                                 </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Xa6-q3-JOb"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="Ha6-J4-nkD" firstAttribute="top" secondItem="afb-rb-9o7" secondAttribute="bottom" constant="15" id="5FH-Cn-OqD"/>
                             <constraint firstItem="wnI-ra-sKM" firstAttribute="top" secondItem="wBi-Az-7e4" secondAttribute="bottom" constant="10" id="6qe-9y-u0x"/>
                             <constraint firstItem="wnI-ra-sKM" firstAttribute="centerX" secondItem="lYH-bV-7dT" secondAttribute="centerX" id="Aq6-7T-7z9"/>
                             <constraint firstItem="wjC-Yk-564" firstAttribute="leading" secondItem="Xa6-q3-JOb" secondAttribute="leading" constant="75" id="HNA-9l-BdW"/>
@@ -117,11 +127,13 @@
                             <constraint firstItem="hEI-iW-LUO" firstAttribute="top" secondItem="wjC-Yk-564" secondAttribute="bottom" constant="30" id="xYC-gc-s5a"/>
                             <constraint firstItem="Xa6-q3-JOb" firstAttribute="trailing" secondItem="wjC-Yk-564" secondAttribute="trailing" constant="75" id="ydi-Wf-sop"/>
                             <constraint firstItem="hEI-iW-LUO" firstAttribute="leading" secondItem="Xa6-q3-JOb" secondAttribute="leading" constant="75" id="zCO-jv-lU3"/>
+                            <constraint firstItem="Ha6-J4-nkD" firstAttribute="centerX" secondItem="lYH-bV-7dT" secondAttribute="centerX" id="zf4-QJ-iow"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="PvQ-Qq-zOr"/>
                     <connections>
                         <outlet property="datePicker" destination="wBi-Az-7e4" id="5o6-RW-Ssx"/>
+                        <outlet property="deleteBtn" destination="Ha6-J4-nkD" id="Ldu-7t-I3P"/>
                         <outlet property="itemBody" destination="hEI-iW-LUO" id="0g6-Rp-kD6"/>
                         <outlet property="itemTitle" destination="wjC-Yk-564" id="fyS-LH-Cbl"/>
                         <outlet property="statusPicker" destination="wnI-ra-sKM" id="ceY-3w-gos"/>
@@ -153,6 +165,9 @@
     <resources>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

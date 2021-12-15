@@ -8,19 +8,19 @@
 import Foundation
 
 
-//enum Status: {
-//    case toDO
-//    case inProgress
-//    case done
-//    
-//    var currentStatus: String {
-//        switch self {
-//        case .toDO:
-//            return "To-Do"
-//        case .inProgress:
-//            return "In Progress"
-//        case .done:
-//            return "Done"
-//        }
-//    }
-//}
+enum Status: Int, RawRepresentable{
+    case toDO
+    case inProgress
+    case done
+    
+    var currentStatus: String {
+        switch self {
+        case .toDO:
+            return "To-Do"
+        case .inProgress:
+            return "In Progress"
+        case .done:
+            return "Done"
+        }
+    }
+}

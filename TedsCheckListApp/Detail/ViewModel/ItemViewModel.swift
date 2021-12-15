@@ -12,5 +12,6 @@ struct ItemViewModel {
     let title: String?
     let body: String?
     let status: String?
-    let date: String?
+    let date: Date?
+    let id: String?
 }
